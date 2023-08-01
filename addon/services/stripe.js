@@ -21,6 +21,7 @@ export default Service.extend({
 
   init() {
     this._super(...arguments);
+    assert(this.config, 'StripeService: Missing Stripe key, please set `ENV.stripe.publishableKey` in config.environment.js and override the constructor for this service');
 
     let lazyLoad = this.get('lazyLoad');
     let mock = this.get('mock');

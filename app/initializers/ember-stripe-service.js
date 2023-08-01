@@ -8,16 +8,9 @@ export function initialize() {
 
   stripeConfig.debug = stripeConfig.debug || config.LOG_STRIPE_SERVICE;
 
-  application.register('config:stripe', stripeConfig, { instantiate: false });
-  application.inject('service:stripe', 'config', 'config:stripe');
-
   if (stripeConfig.debug) {
     /* eslint-disable no-console */
     console.log('StripeService: initialize');
-  }
-
-  if (!stripeConfig.publishableKey) {
-    throw new EmberError("StripeService: Missing Stripe key, please set `ENV.stripe.publishableKey` in config.environment.js");
   }
 
   if (typeof FastBoot !== 'undefined' || stripeConfig.mock) {
