@@ -1,4 +1,3 @@
-import EmberError from '@ember/error';
 import StripeMock from 'ember-stripe-service/utils/stripe-mock';
 import config from '../config/environment';
 

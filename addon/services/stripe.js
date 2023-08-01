@@ -1,5 +1,6 @@
 /* global Stripe */
 import { isEqual, typeOf } from '@ember/utils';
+import { assert } from '@ember/debug';
 
 import { resolve, Promise as EmberPromise } from 'rsvp';
 import { registerWaiter } from '@ember/test';
