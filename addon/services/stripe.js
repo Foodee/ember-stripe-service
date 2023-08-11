@@ -4,7 +4,6 @@ import { assert } from '@ember/debug';
 
 import { resolve, Promise as EmberPromise } from 'rsvp';
 import { registerWaiter } from '@ember/test';
-import { readOnly } from '@ember/object/computed';
 import Service from '@ember/service';
 import loadScript from 'ember-stripe-service-foodee/utils/load-script';
 
@@ -12,16 +11,21 @@ export default Service.extend({
   didConfigure: false,
   config: null,
 
-  lazyLoad: readOnly('config.lazyLoad'),
-  mock: readOnly('config.mock'),
-  publishableKey: readOnly('config.publishableKey'),
-  debuggingEnabled: readOnly('config.debug'),
+  lazyLoad: null,
+  mock: null,
+  publishableKey: null,
+  debuggingEnabled: null,
 
   runCount: 0,
 
   init() {
     this._super(...arguments);
     assert(this.config, 'StripeService: Missing Stripe key, please set `ENV.stripe.publishableKey` in config.environment.js and override the constructor for this service');
+
+    this.lazyLoad = config.lazyLoad;
+    this.mock = config.mock;
+    this.publishableKey = config.publishableKey;
+    this.debuggingEnabled = config.debuggingEnabled;
 
     let lazyLoad = this.get('lazyLoad');
     let mock = this.get('mock');
@@ -88,11 +92,11 @@ export default Service.extend({
   },
 
   /**
-  * Creates a creditCard token using Stripe.js API, exposed as `card.createToken`
-  * @param  {object} card  CreditCard
-  * @return {promise}      Returns a promise that holds response, see stripe.js docs for details
-  *                        status is not being returned at the moment but it can be logged
-  */
+   * Creates a creditCard token using Stripe.js API, exposed as `card.createToken`
+   * @param  {object} card  CreditCard
+   * @return {promise}      Returns a promise that holds response, see stripe.js docs for details
+   *                        status is not being returned at the moment but it can be logged
+   */
   _createCardToken(card) {
     this.debug('card.createToken:', card);
     this.incrementProperty('runCount');
@@ -113,12 +117,12 @@ export default Service.extend({
   },
 
   /**
-  * Creates a BankAccout token using Stripe.js API, exposed as `bankAccount.createToken`
-  * @param  {object} bankAccount
-  * @return {promise}      Returns a promise that holds response, see stripe.js docs for details
-  *                        Status is not being returned at the moment but it can be logged
-  *
-  */
+   * Creates a BankAccout token using Stripe.js API, exposed as `bankAccount.createToken`
+   * @param  {object} bankAccount
+   * @return {promise}      Returns a promise that holds response, see stripe.js docs for details
+   *                        Status is not being returned at the moment but it can be logged
+   *
+   */
   _createBankAccountToken(bankAccount) {
     this.debug('bankAccount.createToken:', bankAccount);
     this.incrementProperty('runCount');
@@ -187,7 +191,8 @@ export default Service.extend({
     if (isEqual(typeOf(Stripe.card[name]), 'function')) {
       this.card[name] = fn;
     } else {
-      this.card[name] = function() {};
+      this.card[name] = function () {
+      };
       console.error(`ember-cli-stripe: ${name} on Stripe.card is no longer available`);
     }
   }
