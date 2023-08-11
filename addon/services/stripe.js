@@ -6,7 +6,6 @@ import { resolve, Promise as EmberPromise } from 'rsvp';
 import { registerWaiter } from '@ember/test';
 import { readOnly } from '@ember/object/computed';
 import Service from '@ember/service';
-import Ember from 'ember';
 import loadScript from 'ember-stripe-service-foodee/utils/load-script';
 
 export default Service.extend({
@@ -27,7 +26,7 @@ export default Service.extend({
     let lazyLoad = this.get('lazyLoad');
     let mock = this.get('mock');
 
-    if (Ember.testing) {
+    if (this.config.testing) {
       this._waiter = () => {
         return this.get('runCount') === 0;
       };
@@ -180,7 +179,7 @@ export default Service.extend({
     if (debuggingEnabled) {
       let args = Array.prototype.slice.call(arguments);
       args[0] = `StripeService: ${args[0]}`;
-      Ember.Logger.info.apply(null, args);
+      console.info.apply(null, args);
     }
   },
 
@@ -189,7 +188,7 @@ export default Service.extend({
       this.card[name] = fn;
     } else {
       this.card[name] = function() {};
-      Ember.Logger.error(`ember-cli-stripe: ${name} on Stripe.card is no longer available`);
+      console.error(`ember-cli-stripe: ${name} on Stripe.card is no longer available`);
     }
   }
 });
