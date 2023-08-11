@@ -7,7 +7,7 @@ import { registerWaiter } from '@ember/test';
 import { readOnly } from '@ember/object/computed';
 import Service from '@ember/service';
 import Ember from 'ember';
-import loadScript from 'ember-stripe-service/utils/load-script';
+import loadScript from 'ember-stripe-service-foodee/utils/load-script';
 
 export default Service.extend({
   didConfigure: false,

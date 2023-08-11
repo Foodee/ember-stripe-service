@@ -1,7 +1,7 @@
 import { module, test } from 'qunit';
 import { setupTest } from 'ember-qunit';
 import env from 'dummy/config/environment';
-import StripeMock from 'ember-stripe-service/utils/stripe-mock';
+import StripeMock from 'ember-stripe-service-foodee/utils/stripe-mock';
 import sinon from 'sinon';
 
 module('Integration | Stripe service', function(hooks) {

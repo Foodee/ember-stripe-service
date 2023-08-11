@@ -1,8 +1,8 @@
 import sinon from 'sinon';
 import { module, test } from 'qunit';
-import { initialize } from 'dummy/initializers/ember-stripe-service';
+import { initialize } from 'dummy/initializers/ember-stripe-service-foodee';
 import env from 'dummy/config/environment';
-import StripeMock from 'ember-stripe-service/utils/stripe-mock';
+import StripeMock from 'ember-stripe-service-foodee/utils/stripe-mock';
 import { setupTest } from 'ember-qunit';
 
 module('Unit | Initializer | Stripe Service Initializer', function(hooks) {

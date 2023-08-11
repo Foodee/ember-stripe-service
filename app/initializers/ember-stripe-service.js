@@ -1,4 +1,4 @@
-import StripeMock from 'ember-stripe-service/utils/stripe-mock';
+import StripeMock from 'ember-stripe-service-foodee/utils/stripe-mock';
 import config from '../config/environment';
 
 export function initialize() {

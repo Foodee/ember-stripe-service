@@ -1,1 +1,1 @@
-export { default } from 'ember-stripe-service/services/stripe';
+export { default } from 'ember-stripe-service-foodee/services/stripe';
