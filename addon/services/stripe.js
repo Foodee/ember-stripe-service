@@ -1,11 +1,11 @@
 /* global Stripe */
-import { isEqual, typeOf } from '@ember/utils';
-import { assert } from '@ember/debug';
+import { isEqual, typeOf } from "@ember/utils";
+import { assert } from "@ember/debug";
 
-import { resolve, Promise as EmberPromise } from 'rsvp';
-import { registerWaiter } from '@ember/test';
-import Service from '@ember/service';
-import loadScript from 'ember-stripe-service-foodee/utils/load-script';
+import { resolve, Promise as EmberPromise } from "rsvp";
+import { registerWaiter } from "@ember/test";
+import Service from "@ember/service";
+import loadScript from "ember-stripe-service-foodee/utils/load-script";
 
 export default Service.extend({
   didConfigure: false,
@@ -20,19 +20,22 @@ export default Service.extend({
 
   init() {
     this._super(...arguments);
-    assert(this.config, 'StripeService: Missing Stripe key, please set `ENV.stripe.publishableKey` in config.environment.js and override the constructor for this service');
+    assert(
+      this.config,
+      "StripeService: Missing Stripe key, please set `ENV.stripe.publishableKey` in config.environment.js and override the constructor for this service"
+    );
 
-    this.lazyLoad = config.lazyLoad;
-    this.mock = config.mock;
-    this.publishableKey = config.publishableKey;
-    this.debuggingEnabled = config.debuggingEnabled;
+    this.lazyLoad = this.config.lazyLoad;
+    this.mock = this.config.mock;
+    this.publishableKey = this.config.publishableKey;
+    this.debuggingEnabled = this.config.debuggingEnabled;
 
-    let lazyLoad = this.get('lazyLoad');
-    let mock = this.get('mock');
+    let lazyLoad = this.get("lazyLoad");
+    let mock = this.get("mock");
 
     if (this.config.testing) {
       this._waiter = () => {
-        return this.get('runCount') === 0;
+        return this.get("runCount") === 0;
       };
       registerWaiter(this._waiter);
     }
@@ -43,12 +46,11 @@ export default Service.extend({
   },
 
   load() {
-    let lazyLoad = this.get('lazyLoad');
-    let mock = this.get('mock');
+    let lazyLoad = this.get("lazyLoad");
+    let mock = this.get("mock");
 
-    let loadJs = lazyLoad && !mock ?
-      loadScript("https://js.stripe.com/v2/") :
-      resolve();
+    let loadJs =
+      lazyLoad && !mock ? loadScript("https://js.stripe.com/v2/") : resolve();
 
     return loadJs.then(() => {
       this.configure();
@@ -56,30 +58,33 @@ export default Service.extend({
   },
 
   configure() {
-    let didConfigure = this.get('didConfigure');
+    let didConfigure = this.get("didConfigure");
 
     if (!didConfigure) {
-      let publishableKey = this.get('publishableKey');
+      let publishableKey = this.get("publishableKey");
       Stripe.setPublishableKey(publishableKey);
 
       this.card = {
-        createToken: this._createCardToken.bind(this)
+        createToken: this._createCardToken.bind(this),
       };
 
       this.bankAccount = {
-        createToken: this._createBankAccountToken.bind(this)
+        createToken: this._createBankAccountToken.bind(this),
       };
 
       this.piiData = {
-        createToken: this._createPiiDataToken.bind(this)
+        createToken: this._createPiiDataToken.bind(this),
       };
 
-      this._checkForAndAddCardFn('cardType', Stripe.card.cardType);
-      this._checkForAndAddCardFn('validateCardNumber', Stripe.card.validateCardNumber);
-      this._checkForAndAddCardFn('validateCVC', Stripe.card.validateCVC);
-      this._checkForAndAddCardFn('validateExpiry', Stripe.card.validateExpiry);
+      this._checkForAndAddCardFn("cardType", Stripe.card.cardType);
+      this._checkForAndAddCardFn(
+        "validateCardNumber",
+        Stripe.card.validateCardNumber
+      );
+      this._checkForAndAddCardFn("validateCVC", Stripe.card.validateCVC);
+      this._checkForAndAddCardFn("validateExpiry", Stripe.card.validateExpiry);
 
-      this.set('didConfigure', true);
+      this.set("didConfigure", true);
     }
   },
 
@@ -98,12 +103,16 @@ export default Service.extend({
    *                        status is not being returned at the moment but it can be logged
    */
   _createCardToken(card) {
-    this.debug('card.createToken:', card);
-    this.incrementProperty('runCount');
+    this.debug("card.createToken:", card);
+    this.incrementProperty("runCount");
 
     return this.stripePromise((resolve, reject) => {
       Stripe.card.createToken(card, (status, response) => {
-        this.debug('card.createToken handler - status %s, response:', status, response);
+        this.debug(
+          "card.createToken handler - status %s, response:",
+          status,
+          response
+        );
 
         if (response.error) {
           reject(response);
@@ -111,7 +120,7 @@ export default Service.extend({
           resolve(response);
         }
 
-        this.decrementProperty('runCount');
+        this.decrementProperty("runCount");
       });
     });
   },
@@ -124,13 +133,16 @@ export default Service.extend({
    *
    */
   _createBankAccountToken(bankAccount) {
-    this.debug('bankAccount.createToken:', bankAccount);
-    this.incrementProperty('runCount');
+    this.debug("bankAccount.createToken:", bankAccount);
+    this.incrementProperty("runCount");
 
     return this.stripePromise((resolve, reject) => {
       Stripe.bankAccount.createToken(bankAccount, (status, response) => {
-
-        this.debug('bankAccount.createToken handler - status %s, response:', status, response);
+        this.debug(
+          "bankAccount.createToken handler - status %s, response:",
+          status,
+          response
+        );
 
         if (response.error) {
           reject(response);
@@ -138,7 +150,7 @@ export default Service.extend({
           resolve(response);
         }
 
-        this.decrementProperty('runCount');
+        this.decrementProperty("runCount");
       });
     });
   },
@@ -150,13 +162,16 @@ export default Service.extend({
    *                           status is not being returned at the moment but it can be logged
    */
   _createPiiDataToken(piiData) {
-    this.debug('piiData.createToken:', piiData);
-    this.incrementProperty('runCount');
+    this.debug("piiData.createToken:", piiData);
+    this.incrementProperty("runCount");
 
     return this.stripePromise((resolve, reject) => {
       Stripe.piiData.createToken(piiData, (status, response) => {
-
-        this.debug('piiData.createToken handler - status %s, response:', status, response);
+        this.debug(
+          "piiData.createToken handler - status %s, response:",
+          status,
+          response
+        );
 
         if (response.error) {
           reject(response);
@@ -164,7 +179,7 @@ export default Service.extend({
           resolve(response);
         }
 
-        this.decrementProperty('runCount');
+        this.decrementProperty("runCount");
       });
     });
   },
@@ -178,7 +193,7 @@ export default Service.extend({
    * - pre-pends StripeService to all messages
    */
   debug() {
-    let debuggingEnabled = this.get('debuggingEnabled');
+    let debuggingEnabled = this.get("debuggingEnabled");
 
     if (debuggingEnabled) {
       let args = Array.prototype.slice.call(arguments);
@@ -188,12 +203,13 @@ export default Service.extend({
   },
 
   _checkForAndAddCardFn(name, fn) {
-    if (isEqual(typeOf(Stripe.card[name]), 'function')) {
+    if (isEqual(typeOf(Stripe.card[name]), "function")) {
       this.card[name] = fn;
     } else {
-      this.card[name] = function () {
-      };
-      console.error(`ember-cli-stripe: ${name} on Stripe.card is no longer available`);
+      this.card[name] = function () {};
+      console.error(
+        `ember-cli-stripe: ${name} on Stripe.card is no longer available`
+      );
     }
-  }
+  },
 });
